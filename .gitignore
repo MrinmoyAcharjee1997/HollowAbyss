@@ -1,0 +1,40 @@
+# Build output
+bin/
+obj/
+
+# Local .NET CLI/cache files
+.dotnet/
+
+# Visual Studio local workspace files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains local files
+.idea/
+
+# Visual Studio Code local files
+.vscode/
+
+# Compiled/generated .NET artifacts
+*.dll
+*.exe
+*.pdb
+*.deps.json
+*.runtimeconfig.json
+
+# NuGet packages and restore output
+packages/
+*.nupkg
+project.lock.json
+project.assets.json
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store

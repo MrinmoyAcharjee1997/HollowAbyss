@@ -1,0 +1,364 @@
+HollowAbyssEngine Class Overview
+================================
+
+This file belongs in a docs folder at the project root:
+
+docs/ClassOverview.txt
+
+Keeping documentation in docs keeps it separate from source code while still making it easy to find.
+
+
+Program
+-------
+Purpose:
+Entry point for the application. It initializes the engine, creates preset players/enemies, selects the current test matchup, and starts a battle.
+
+Functions:
+Main(string[] args)
+- Starts the program, prints the engine initialization message, and calls run().
+
+run()
+- Creates all current player and NPC preset instances.
+- Selects one player and one enemy for the current test case.
+- Creates a Battle object and starts the battle with battle.Run().
+
+
+Battle
+------
+Purpose:
+Controls the full turn-based battle flow between one Player and one NPC.
+
+Functions:
+Battle(Player player, NPC enemy)
+- Stores the selected player and enemy.
+- Initializes the battle round counter.
+
+Run()
+- Runs the main battle loop while both combatants are alive.
+- Clears and redraws the battle header each round.
+- Runs player and enemy turns.
+- Ends temporary block states after the opponent has acted.
+- Prints the final win/loss result.
+
+PlayerTurn()
+- Displays the player action menu.
+- Handles player input for physical attack, magic, block, and WIP options.
+- Repeats until the player chooses a valid action.
+
+EnemyTurn()
+- Runs the enemy's turn.
+- Currently delegates enemy behavior to EnemyChooseAction().
+
+EnemyChooseAction()
+- Chooses what the enemy does.
+- If the enemy is low HP, it prioritizes Heal if it has mana.
+- If the enemy is low HP but cannot heal, it blocks.
+- Otherwise, it randomly chooses between physical attack, spell casting, and block.
+
+GetSpellTarget(Spell spell, Entity caster, Entity opponent)
+- Determines who a spell should target.
+- Heal targets the caster.
+- Soulrend and default offensive spells target the opponent.
+
+PlayerCastSpell()
+- Displays the player's known spell list.
+- Reads spell selection input.
+- Validates the selected spell and mana cost.
+- Casts the selected spell on the correct target.
+
+EnemyCastRandomSpell()
+- Builds a list of enemy spells that can currently be cast.
+- Prevents Heal from being selected at full HP.
+- Randomly selects a valid spell.
+- Falls back to physical attack if no valid spell exists.
+
+PlayerBlock()
+- Starts the player's block stance for the opponent's next action.
+
+EnemyBlock()
+- Starts the enemy's block stance for the opponent's next action.
+
+
+Entity
+------
+Purpose:
+Base class for anything that can participate in combat. It stores identity, base attributes, derived stats, spell access, and shared combat state.
+
+Important data:
+Name
+- Display name of the entity.
+
+Type
+- Whether the entity is a Player or NPC.
+
+VIT, STR, DEX, INT, FAI, LUCK
+- Base attributes used to calculate combat stats.
+
+HP, MaxHP
+- Current and maximum health.
+
+Mana, MaxMana
+- Current and maximum mana.
+
+ATK, MAG, DEF
+- Derived physical attack, magical power, and defense stats.
+
+CritChance, CritDamage, Evasion, Potency, ItemDropRate
+- Derived percentage or multiplier-based stats.
+
+KnownSpells
+- List of spells this entity is allowed to cast.
+
+IsBlocking
+- Whether this entity is currently blocking.
+
+Functions:
+Entity(...)
+- Base constructor used by Player and NPC.
+- Stores name, type, and base attributes.
+
+RecalculateStats()
+- Calculates all derived stats from base attributes.
+- Sets HP and Mana to their maximum values.
+
+TakeDamage(int damage)
+- Applies incoming damage to HP.
+- If blocking, reduces damage by a flat block value plus DEF scaling.
+- Prevents HP from falling below zero.
+
+Heal(int amount)
+- Restores HP.
+- Prevents HP from exceeding MaxHP.
+
+UseMana(int amount)
+- Spends mana.
+- Prevents mana from falling below zero.
+
+HasEnoughMana(int amount)
+- Returns whether the entity has enough mana for a cost.
+
+StartBlock()
+- Enables blocking and displays guard text.
+
+EndBlock()
+- Disables blocking.
+
+
+Player
+------
+Purpose:
+Represents the player-side combatant.
+
+Functions:
+Player(...)
+- Calls the Entity constructor with EntityType.Player.
+- Recalculates derived stats after creation.
+
+
+NPC
+---
+Purpose:
+Represents non-player combatants such as enemies.
+
+Functions:
+NPC(...)
+- Calls the Entity constructor with EntityType.NPC.
+- Recalculates derived stats after creation.
+
+
+Combat
+------
+Purpose:
+Handles direct damage resolution for physical and magical attacks.
+
+Functions:
+PhysicalAttack(Entity attacker, Entity defender)
+- Prints attack text.
+- Checks defender evasion.
+- Calculates physical damage from attacker ATK.
+- Applies crit chance and crit damage.
+- Reduces damage by defender DEF.
+- Applies final damage through defender.TakeDamage().
+
+MagicAttack(Entity attacker, Entity defender, int baseDamage, double scalingMultiplier)
+- Checks defender evasion.
+- Calculates magic damage from spell base damage plus MAG/Potency scaling.
+- Reduces damage by defender DEF.
+- Applies final damage through defender.TakeDamage().
+
+
+Magic
+-----
+Purpose:
+Central spell registry and spell effect handler.
+
+Spells:
+Soulrend
+- Basic offensive spell.
+- Costs 12 mana.
+
+Heal
+- Basic healing spell.
+- Costs 10 mana.
+
+Functions:
+CastSpell(Spell spell, Entity caster, Entity target)
+- Checks whether the caster has enough mana.
+- Spends mana.
+- Routes the spell to its specific effect function.
+
+CastSoulrend(Entity caster, Entity target)
+- Displays Soulrend cast text.
+- Calls Combat.MagicAttack() with Soulrend's base damage and scaling.
+
+CastHeal(Entity caster, Entity target)
+- Calculates heal amount from a flat base plus caster MAG and Potency.
+- Heals the target.
+- Displays recovery text.
+
+
+Spell
+-----
+Purpose:
+Simple data class for spell definitions.
+
+Data:
+Name
+- Spell display name.
+
+ManaCost
+- Mana required to cast the spell.
+
+Functions:
+Spell(string name, int manaCost)
+- Creates a spell definition with a name and mana cost.
+
+
+GameUI
+------
+Purpose:
+Handles basic user input and console output. This separates display/input logic from battle and combat rules.
+
+Functions:
+ShowMessage(string message)
+- Prints a line instantly.
+
+ShowInline(string message)
+- Prints text without moving to a new line.
+
+NewLine()
+- Prints a blank line.
+
+Clear()
+- Clears the console screen.
+
+GetSingleKeyInput(bool showPressedKey = true)
+- Clears queued key input.
+- Reads one key without requiring Enter.
+- Optionally echoes the pressed key.
+
+GetChoice(params string[] choices)
+- Displays numbered menu choices.
+- Reads and returns a single key input.
+
+WaitForAnyKey(string message = "Press any key to continue...")
+- Displays a pause message and waits for one key press.
+
+Status(Entity entity)
+- Prints formatted HP and MP status for one entity.
+
+ShowBattleHeader(Player player, NPC enemy, int round)
+- Prints a separator, matchup title, round number, and combatant status lines.
+
+
+TextEffects
+-----------
+Purpose:
+Handles simple console text presentation effects.
+
+Functions:
+TypeText(string text, int delay = 25)
+- Prints text one character at a time.
+- Adds a longer pause after punctuation.
+- Ends by moving to a new line.
+
+
+PlayerPresets
+-------------
+Purpose:
+Stores predefined player builds for testing and class archetypes.
+
+Functions:
+CreateWarrior()
+- Creates a high VIT/STR physical fighter with basic spells.
+
+CreateKnight()
+- Creates a durable defensive player class with basic spells.
+
+CreateRogue()
+- Creates a DEX/LUCK-focused evasive player class with basic spells.
+
+CreateRanger()
+- Creates a balanced DEX-focused physical player class with basic spells.
+
+CreateMage()
+- Creates a high INT caster player class with basic spells.
+
+CreateCleric()
+- Creates a FAI-focused support/healing player class with basic spells.
+
+CreateBattlemage()
+- Creates a STR/INT hybrid player class with basic spells.
+
+CreatePaladin()
+- Creates a VIT/STR/FAI hybrid player class with basic spells.
+
+CreateAssassin()
+- Creates a high DEX/LUCK burst/evasion player class with basic spells.
+
+CreateWretch()
+- Creates a challenge class with all stats set to 1.
+- Currently does not receive the basic spells.
+
+
+NPCPresets
+----------
+Purpose:
+Stores predefined enemy builds for testing combat archetypes.
+
+Functions:
+CreateGoblin()
+- Creates a baseline weak physical enemy with basic spells.
+
+CreateBrute()
+- Creates a high HP/STR enemy with basic spells.
+
+CreateScout()
+- Creates a high DEX/LUCK evasive enemy with basic spells.
+
+CreateBandit()
+- Creates a balanced humanoid enemy with basic spells.
+
+CreateCultist()
+- Creates a magic-leaning enemy with basic spells.
+
+CreateKnight()
+- Creates a defensive enemy with basic spells.
+
+CreateAssassin()
+- Creates a high DEX/LUCK burst enemy with basic spells.
+
+CreateSlime()
+- Creates a simple high HP, low offense enemy with basic spells.
+
+CreateSkeleton()
+- Creates a steady mid-tier physical enemy with basic spells.
+
+CreateShaman()
+- Creates a high INT/FAI caster enemy with basic spells.
+
+CreateBeast()
+- Creates an aggressive physical enemy with basic spells.
+
+CreateEliteGuard()
+- Creates a strong all-around enemy with basic spells.
