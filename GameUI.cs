@@ -57,7 +57,7 @@ namespace HollowAbyssEngine
                 ShowMessage($"{i + 1}. {choices[i]}");
             }
 
-            ShowInline("Input: ");
+            ShowInline("Your choice: ");
             char input = GetSingleKeyInput();
             NewLine();
 

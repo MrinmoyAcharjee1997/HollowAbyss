@@ -28,6 +28,13 @@ namespace HollowAbyssEngine
         public int ATK { get; protected set; }
         public int MAG { get; protected set; }
         public int DEF { get; protected set; }
+        public int Dexterity => DEX;
+
+        // Resistance values are decimal percentages: 0.15 represents 15%.
+        // Equipment, passives, and status effects can modify these later.
+        public double PhysicalResistance { get; protected set; }
+        public double MagicalResistance { get; protected set; }
+        public double StatusResistance { get; protected set; }
 
         public double CritChance { get; protected set; }
         public double CritDamage { get; protected set; }
@@ -73,6 +80,17 @@ namespace HollowAbyssEngine
 
             // DEF
             DEF = (2 * VIT) + (2 * STR);
+
+            // Resistance
+            // Physical resistance is reserved for gear, traits, and buffs.
+            PhysicalResistance = 0;
+
+            // Magical resistance represents an entity's innate warding. Gear
+            // and magical effects can add to it later.
+            MagicalResistance = (0.004 * FAI) + (0.0005 * INT);
+
+            // Placeholder until the status-effect system is implemented.
+            StatusResistance = 0;
 
             // Percent-based stats
             CritChance = (0.003 * DEX) + (0.007 * LUCK);

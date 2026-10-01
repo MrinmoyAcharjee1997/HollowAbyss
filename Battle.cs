@@ -9,6 +9,8 @@ namespace HollowAbyssEngine
         private Player player;
         private NPC enemy;
         private int round;
+        private bool escaped;
+        private bool escapeLocked;
 
         // Shared RNG for enemy action selection.
         private static Random rng = new Random();
@@ -22,7 +24,7 @@ namespace HollowAbyssEngine
 
         public void Run()
         {
-            while (player.HP > 0 && enemy.HP > 0)
+            while (player.HP > 0 && enemy.HP > 0 && !escaped)
             {
                 GameUI.Clear();
                 GameUI.ShowBattleHeader(player, enemy, round);
@@ -30,6 +32,11 @@ namespace HollowAbyssEngine
                 // Player acts first each round.
                 TextEffects.TypeText("Your Turn...");
                 PlayerTurn();
+
+                if (escaped)
+                {
+                    break;
+                }
 
                 if (enemy.IsBlocking)
                 {
@@ -58,7 +65,13 @@ namespace HollowAbyssEngine
 
             TextEffects.TypeText("");
 
-            if (enemy.HP == 0)
+            if (escaped)
+            {
+                TextEffects.TypeText($"{player.Name} escapes from {enemy.Name}.");
+                ApplyEscapeLoss();
+                GameUI.ShowMessage("---------------------------------------------------------------------");
+            }
+            else if (enemy.HP == 0)
             {
                 TextEffects.TypeText($"{enemy.Name} perishes in battle!");
                 TextEffects.TypeText($"Fight Concluded! {player.Name} wins!");
@@ -81,7 +94,10 @@ namespace HollowAbyssEngine
             while (!validChoice)
             {
                 GameUI.ShowMessage("Choose an action:");
-                char input = GameUI.GetChoice("Physical Attack", "Cast Magic", "Block", "Parry (WIP)", "Use Item (WIP)", "Escape (WIP)");
+                string escapeChoice = escapeLocked
+                    ? "Escape (unavailable)"
+                    : $"Escape ({GetEscapeChance()}%)";
+                char input = GameUI.GetChoice("Physical Attack", "Cast Magic", "Block", "Parry (WIP)", "Use Item (WIP)", escapeChoice);
 
                 GameUI.NewLine();
 
@@ -99,6 +115,20 @@ namespace HollowAbyssEngine
                     case '3':
                         PlayerBlock();
                         validChoice = true;
+                        break;
+
+                    case '6':
+                        if (escapeLocked)
+                        {
+                            GameUI.ShowMessage("You have already failed to escape this battle.");
+                            GameUI.Clear();
+                        }
+                        else
+                        {
+                            escaped = TryEscape();
+                            escapeLocked = !escaped;
+                            validChoice = true;
+                        }
                         break;
 
                     default:
@@ -139,9 +169,9 @@ namespace HollowAbyssEngine
                 return;
             }
 
-            // Normal behavior: randomly choose between
-            // physical attack, spell cast, or block.
-            int choice = rng.Next(1, 4);
+            // A healthy enemy should stay on the offensive. Defensive blocking
+            // is reserved for the low-health fallback above.
+            int choice = rng.Next(1, 3);
 
             switch (choice)
             {
@@ -189,7 +219,7 @@ namespace HollowAbyssEngine
                 GameUI.ShowMessage($"{i + 1}. {spell.Name} ({spell.ManaCost} MP)");
             }
 
-            GameUI.ShowInline("Input: ");
+            GameUI.ShowInline("Your choice: ");
             char input = GameUI.GetSingleKeyInput();
             GameUI.NewLine();
 
@@ -254,6 +284,38 @@ namespace HollowAbyssEngine
         private void EnemyBlock()
         {
             enemy.StartBlock();
+        }
+
+        private int GetEscapeChance()
+        {
+            // Encounter difficulty establishes the base. Dexterity changes the
+            // odds, while 0% and 100% remain authored, deterministic outcomes.
+            if (enemy.EscapeBaseChance == 0 || enemy.EscapeBaseChance == 100)
+            {
+                return enemy.EscapeBaseChance;
+            }
+
+            int dexterityModifier = (player.Dexterity - enemy.Dexterity) * 2;
+            return Math.Clamp(enemy.EscapeBaseChance + dexterityModifier, 5, 95);
+        }
+
+        private bool TryEscape()
+        {
+            int chance = GetEscapeChance();
+            bool succeeded = rng.Next(100) < chance;
+
+            TextEffects.TypeText(succeeded
+                ? $"Escape succeeds ({chance}% chance)."
+                : $"Escape fails ({chance}% chance)! {enemy.Name} can retaliate.");
+
+            return succeeded;
+        }
+
+        private void ApplyEscapeLoss()
+        {
+            // TODO: Replace with a real loss when inventory and encounter
+            // rewards exist (for example, forfeited rewards or dropped currency).
+            GameUI.ShowMessage("You receive no rewards for escaping.");
         }
     }
 }

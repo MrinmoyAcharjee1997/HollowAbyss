@@ -31,11 +31,10 @@ namespace HollowAbyssEngine
                 TextEffects.TypeText($"Critical Hit! {damage} damage dealt!");
             }
 
-            // 4. DEF mitigation (LAST)
-            damage -= defender.DEF;
-
-            if (damage < 1)
-                damage = 0;
+            // 4. DEF mitigation. Physical armor has diminishing returns and
+            // cannot fully negate a successful hit by itself.
+            damage = ApplyDefenseMitigation(damage, defender.DEF, 100);
+            damage = ApplyResistance(damage, defender.PhysicalResistance);
 
             // 5. Apply damage
             defender.TakeDamage(damage);
@@ -57,16 +56,28 @@ namespace HollowAbyssEngine
             int scaledDamage = (int)((attacker.MAG * attacker.Potency) * scalingMultiplier);
             int damage = baseDamage + scaledDamage;
 
-            // 3. DEF mitigation
-            damage -= defender.DEF;
-
-            if (damage < 1)
-                damage = 0;
+            // 3. Magic bypasses physical armor and is reduced by the target's
+            // innate and equipment-based magical resistance instead.
+            damage = ApplyResistance(damage, defender.MagicalResistance);
 
             // 4. Apply
             defender.TakeDamage(damage);
 
             Thread.Sleep(1500);
+        }
+
+        private static int ApplyDefenseMitigation(int damage, int defense, int mitigationConstant)
+        {
+            double damageMultiplier = mitigationConstant / (double)(mitigationConstant + defense);
+            return Math.Max(1, (int)Math.Round(damage * damageMultiplier));
+        }
+
+        private static int ApplyResistance(int damage, double resistance)
+        {
+            // Supports future vulnerabilities as well as resistance, while
+            // protecting the combat system from accidental immunity stacks.
+            double clampedResistance = Math.Clamp(resistance, -0.75, 0.75);
+            return Math.Max(1, (int)Math.Round(damage * (1 - clampedResistance)));
         }
     }
 }

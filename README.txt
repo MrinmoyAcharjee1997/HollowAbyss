@@ -11,7 +11,8 @@ The current focus of the project is not final game content, but the underlying c
 Current Features
 ----------------
 - Player and NPC entity system
-- Base attributes and derived combat stats
+- Base attributes and derived combat stats, including DEF, Physical Resistance,
+  Magical Resistance, and a Status Resistance placeholder
 - Player class presets
 - NPC/enemy presets
 - Turn-based battle loop
@@ -21,6 +22,7 @@ Current Features
 - Magic casting with mana costs
 - Basic spells: Soulrend and Heal
 - Blocking as a turn action
+- Escape with encounter-specific odds and a Dexterity modifier
 - HP and mana display
 - Console UI helper layer
 - Typed text effects for battle presentation
@@ -31,6 +33,7 @@ Current Combat Actions
 - Physical Attack
 - Cast Magic
 - Block
+- Escape
 
 The following actions are planned but not implemented yet:
 - Parry
@@ -114,7 +117,6 @@ Planned Features
 - More combat actions
 - Parry system
 - Item usage
-- Escape mechanics
 - More spells with different effects
 - Class-dependent and unlockable spells
 - Better enemy behavior
@@ -124,6 +126,21 @@ Planned Features
 - Story and encounter structure
 - Custom game window / GUI
 - Audio support for music and effects
+
+
+Defense and Resistance
+----------------------
+- DEF is a raw physical armor rating derived from VIT and STR. It uses a
+  diminishing mitigation curve against direct physical attacks.
+- Physical Resistance is an overall percentage modifier applied after DEF.
+  It is currently 0% for all presets and reserved for future gear, traits,
+  buffs, and vulnerabilities.
+- Magical Resistance is an innate percentage derived from FAI and INT. It
+  mitigates magical damage instead of DEF, and can later receive gear and
+  effect bonuses.
+- Status Resistance is currently a 0% placeholder for the future status-effect
+  system. It will govern status application or duration, independently of
+  damage resistance.
 
 
 Build Output

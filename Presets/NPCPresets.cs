@@ -15,7 +15,8 @@ namespace HollowAbyssEngine.Presets
                 dex: 16,
                 intel: 8,
                 fai: 6,
-                luck: 12);
+                luck: 12,
+                escapeBaseChance: 100);
 
             goblin.KnownSpells.Add(Magic.Soulrend);
             goblin.KnownSpells.Add(Magic.Heal);
@@ -32,7 +33,8 @@ namespace HollowAbyssEngine.Presets
                 dex: 10,
                 intel: 4,
                 fai: 4,
-                luck: 8);
+                luck: 8,
+                escapeBaseChance: 60);
 
             brute.KnownSpells.Add(Magic.Soulrend);
             brute.KnownSpells.Add(Magic.Heal);
@@ -49,7 +51,8 @@ namespace HollowAbyssEngine.Presets
                 dex: 34,
                 intel: 10,
                 fai: 6,
-                luck: 22);
+                luck: 22,
+                escapeBaseChance: 45);
 
             scout.KnownSpells.Add(Magic.Soulrend);
             scout.KnownSpells.Add(Magic.Heal);
@@ -66,7 +69,8 @@ namespace HollowAbyssEngine.Presets
                 dex: 20,
                 intel: 10,
                 fai: 8,
-                luck: 18);
+                luck: 18,
+                escapeBaseChance: 65);
 
             bandit.KnownSpells.Add(Magic.Soulrend);
             bandit.KnownSpells.Add(Magic.Heal);
@@ -83,7 +87,8 @@ namespace HollowAbyssEngine.Presets
                 dex: 14,
                 intel: 34,
                 fai: 28,
-                luck: 16);
+                luck: 16,
+                escapeBaseChance: 50);
 
             cultist.KnownSpells.Add(Magic.Soulrend);
             cultist.KnownSpells.Add(Magic.Heal);
@@ -100,7 +105,8 @@ namespace HollowAbyssEngine.Presets
                dex: 14,
                intel: 20,
                fai: 10,
-               luck: 12);
+               luck: 12,
+               escapeBaseChance: 55);
 
             knight.KnownSpells.Add(Magic.Soulrend);
             knight.KnownSpells.Add(Magic.Heal);
@@ -117,7 +123,8 @@ namespace HollowAbyssEngine.Presets
                dex: 38,
                intel: 14,
                fai: 8,
-               luck: 30);
+               luck: 30,
+               escapeBaseChance: 30);
 
             assassin.KnownSpells.Add(Magic.Soulrend);
             assassin.KnownSpells.Add(Magic.Heal);
@@ -134,7 +141,8 @@ namespace HollowAbyssEngine.Presets
                 dex: 6,
                 intel: 4,
                 fai: 4,
-                luck: 6);
+                luck: 6,
+                escapeBaseChance: 85);
 
             slime.KnownSpells.Add(Magic.Soulrend);
             slime.KnownSpells.Add(Magic.Heal);
@@ -151,7 +159,8 @@ namespace HollowAbyssEngine.Presets
                dex: 18,
                intel: 8,
                fai: 4,
-               luck: 10);
+               luck: 10,
+               escapeBaseChance: 70);
 
             skeleton.KnownSpells.Add(Magic.Soulrend);
             skeleton.KnownSpells.Add(Magic.Heal);
@@ -168,7 +177,8 @@ namespace HollowAbyssEngine.Presets
                 dex: 12,
                 intel: 38,
                 fai: 24,
-                luck: 14);
+                luck: 14,
+                escapeBaseChance: 60);
 
             shaman.KnownSpells.Add(Magic.Soulrend);
             shaman.KnownSpells.Add(Magic.Heal);
@@ -185,7 +195,8 @@ namespace HollowAbyssEngine.Presets
                 dex: 22,
                 intel: 4,
                 fai: 2,
-                luck: 12);
+                luck: 12,
+                escapeBaseChance: 55);
 
             beast.KnownSpells.Add(Magic.Soulrend);
             beast.KnownSpells.Add(Magic.Heal);
@@ -202,7 +213,8 @@ namespace HollowAbyssEngine.Presets
                 dex: 20,
                 intel: 18,
                 fai: 12,
-                luck: 16);
+                luck: 16,
+                escapeBaseChance: 35);
 
             eliteGuard.KnownSpells.Add(Magic.Soulrend);
             eliteGuard.KnownSpells.Add(Magic.Heal);
