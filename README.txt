@@ -5,7 +5,9 @@ Status: Work in Progress / Systems Prototype
 
 Hollow Abyss Engine is a text-based RPG combat systems prototype written in C#.
 
-The current focus of the project is not final game content, but the underlying combat systems: entity stats, derived combat values, turn-based actions, magic, mana, blocking, enemy behavior, and preset-based testing.
+The current focus is not final game content, but the underlying combat systems:
+entity stats, derived combat values, turn-based actions, magic, mana, defense,
+resistances, blocking, escape, enemy behavior, and preset-based testing.
 
 
 Current Features
@@ -17,12 +19,14 @@ Current Features
 - NPC/enemy presets
 - Turn-based battle loop
 - Player action selection
-- Simple enemy action selection
+- Basic enemy behavior: healthy enemies attack or cast magic; low-health
+  enemies try to Heal, then Block if they cannot afford it
 - Physical attacks
 - Magic casting with mana costs
 - Basic spells: Soulrend and Heal
 - Blocking as a turn action
-- Escape with encounter-specific odds and a Dexterity modifier
+- Escape with encounter-specific odds, a Dexterity modifier, and a one-attempt
+  limit per battle
 - HP and mana display
 - Console UI helper layer
 - Typed text effects for battle presentation
@@ -38,7 +42,6 @@ Current Combat Actions
 The following actions are planned but not implemented yet:
 - Parry
 - Use Item
-- Escape
 
 
 Design Goal
@@ -75,10 +78,12 @@ NPC.cs
 - Enemy/non-player entity type.
 
 Battle.cs
-- Handles the turn-based battle loop, player choices, enemy choices, spell selection, blocking, and win/loss flow.
+- Handles the turn-based battle loop, player choices, enemy choices, spell
+  selection, blocking, escape, and battle outcomes.
 
 Combat.cs
-- Handles physical and magical damage resolution.
+- Handles physical and magical damage resolution, including the DEF mitigation
+  curve and resistance modifiers.
 
 Magic.cs
 - Stores basic spells and routes spell casting behavior.
@@ -117,6 +122,7 @@ Planned Features
 - More combat actions
 - Parry system
 - Item usage
+- Status-effect system and Status Resistance behavior
 - More spells with different effects
 - Class-dependent and unlockable spells
 - Better enemy behavior
